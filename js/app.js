@@ -14,49 +14,50 @@
         }));
     }
     let bodyLockStatus = true;
-    let bodyLockToggle = (delay = 1) => {
-        if (document.documentElement.classList.contains("lock")) bodyUnlock(delay); else bodyLock(delay);
-    };
-    let bodyUnlock = (delay = 500) => {
-        let body = document.querySelector("body");
-        if (bodyLockStatus) {
-            let lock_padding = document.querySelectorAll("[data-lp]");
-            setTimeout((() => {
-                for (let index = 0; index < lock_padding.length; index++) {
-                    const el = lock_padding[index];
-                    el.style.paddingRight = "0px";
-                }
-                body.style.paddingRight = "0px";
-                document.documentElement.classList.remove("lock");
-            }), delay);
-            bodyLockStatus = false;
-            setTimeout((function() {
-                bodyLockStatus = true;
-            }), delay);
-        }
-    };
-    let bodyLock = (delay = 500) => {
-        let body = document.querySelector("body");
-        if (bodyLockStatus) {
-            let lock_padding = document.querySelectorAll("[data-lp]");
-            for (let index = 0; index < lock_padding.length; index++) {
-                const el = lock_padding[index];
-                el.style.paddingRight = window.innerWidth - document.querySelector(".wrapper").offsetWidth + "px";
-            }
-            body.style.paddingRight = window.innerWidth - document.querySelector(".wrapper").offsetWidth + "px";
-            document.documentElement.classList.add("lock");
-            bodyLockStatus = false;
-            setTimeout((function() {
-                bodyLockStatus = true;
-            }), delay);
-        }
-    };
     function menuInit() {
         if (document.querySelector(".icon-menu")) document.addEventListener("click", (function(e) {
-            if (bodyLockStatus && e.target.closest(".icon-menu")) {
-                bodyLockToggle();
-                document.documentElement.classList.toggle("menu-open");
-            }
+            if (bodyLockStatus && e.target.closest(".icon-menu")) document.documentElement.classList.toggle("menu-open");
+        }));
+    }
+    function settingsInit() {
+        if (document.querySelector("#btn-settings")) document.addEventListener("click", (function(e) {
+            if (e.target.closest("#btn-settings")) document.documentElement.classList.toggle("settings-open");
+        }));
+        if (document.querySelector("#close-settings")) document.addEventListener("click", (function(e) {
+            if (e.target.closest("#close-settings")) document.documentElement.classList.remove("settings-open");
+        }));
+    }
+    function darkModeInit() {
+        let darkMode = localStorage.getItem("darkMode");
+        const lightModeToggle = document.querySelector("#light-mode-toggle");
+        const darkModeToggle = document.querySelector("#dark-mode-toggle");
+        const enableDarkMode = () => {
+            document.body.classList.add("darkmode");
+            localStorage.setItem("darkMode", "enabled");
+        };
+        const disableDarkMode = () => {
+            document.body.classList.remove("darkmode");
+            localStorage.setItem("darkMode", null);
+        };
+        if (darkMode === "enabled") enableDarkMode();
+        darkModeToggle.addEventListener("click", (() => {
+            darkMode = localStorage.getItem("darkMode");
+            enableDarkMode();
+        }));
+        lightModeToggle.addEventListener("click", (() => {
+            darkMode = localStorage.getItem("darkMode");
+            disableDarkMode();
+        }));
+    }
+    function clickToPlay() {
+        document.addEventListener("DOMContentLoaded", (function() {
+            var audioUrl = "img/sounds/click.wav";
+            var buttons = document.querySelectorAll(".btn-sound");
+            buttons.forEach((function(button) {
+                button.addEventListener("click", (function() {
+                    new Audio(audioUrl).play();
+                }));
+            }));
         }));
     }
     let addWindowScrollEvent = false;
@@ -71,4 +72,7 @@
     window["FLS"] = true;
     isWebp();
     menuInit();
+    settingsInit();
+    darkModeInit();
+    clickToPlay();
 })();
